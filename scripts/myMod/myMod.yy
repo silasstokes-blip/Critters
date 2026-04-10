@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"myMod",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"myMod",
+  "parent":{
+    "name":"CRITTERS",
+    "path":"CRITTERS.yyp",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

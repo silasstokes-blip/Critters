@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"perlin_fill_grid",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"perlin_fill_grid",
+  "parent":{
+    "name":"CRITTERS",
+    "path":"CRITTERS.yyp",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

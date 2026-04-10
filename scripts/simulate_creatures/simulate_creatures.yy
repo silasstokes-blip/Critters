@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"simulate_creatures",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"simulate_creatures",
+  "parent":{
+    "name":"CRITTERS",
+    "path":"CRITTERS.yyp",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
