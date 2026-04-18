@@ -7,6 +7,10 @@ function create_creature(newType,newX,newY){
 // 0 - default
 // 1 - hungry
 // 2 - horny
+while(newX >= houseX1 && newX <= houseX2 && newY >= houseY1 && newY <= houseY2) {
+	newX = irandom_range(0,gridWidth - 1);
+	newY = irandom_range(0,gridHeight - 1)
+}
 var fm = (random_range(0.7,1.4) * random_range(0.7,1.4))
 if (newType == 0) {
 	return({

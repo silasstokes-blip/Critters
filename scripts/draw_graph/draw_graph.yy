@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"draw_graph",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"draw_graph",
+  "parent":{
+    "name":"CRITTERS",
+    "path":"CRITTERS.yyp",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

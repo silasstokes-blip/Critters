@@ -1,136 +1,90 @@
+// ---------------------------DRAW GRASS AND CRITTERS ---------------------------------
 for(f = 0;f < gridWidth; f++) {
 	for(e = 0;e < gridHeight; e++) {
 		draw_sprite_ext(spr_grassPixel,grid[f][e],f,e,1,1,0,c_white,1);
-		/*point1X = floor(f/10)// top left
-		point1Y = floor(e/10)// top left
-		point2X = ceil(f/10)// top left
-		point2Y = floor(e/10)// top left
-		point3X = floor(f/10)// top left
-		point3Y = ceil(e/10)// top left
-		point4X = ceil(f/10)// top left
-		point4Y = ceil(e/10)// top left
-		if(mouse_x = f && mouse_y = e) {
-			draw_sprite_ext(spr_pixel,0,point1X * 10,point1Y * 10,1,1,0,c_red,1);
-			draw_sprite_ext(spr_pixel,0,point2X * 10,point2Y * 10,1,1,0,c_red,1);
-			draw_sprite_ext(spr_pixel,0,point3X * 10,point3Y * 10,1,1,0,c_red,1);
-			draw_sprite_ext(spr_pixel,0,point4X * 10,point4Y * 10,1,1,0,c_red,1);
-		}
-		draw_set_font(Font1)
-		draw_text_transformed(f,e,grid[f][e],0.01,0.01,0);*/
 	}
 }
 for(f = 0; f < creaCount; f++) {
 	if(!crea[f].eaten) {
 		if(crea[f].myType == 0) {
-			draw_sprite_ext(spr_pixel,0,crea[f].myX,crea[f].myY,1,1,0,c_white,1);
+			draw_sprite_ext(spr_pixel2,0,crea[f].myX + 0.5,crea[f].myY + 0.5,0.35,0.35,0,c_white,1);
 		} else if(crea[f].myType == 1){
-			draw_sprite_ext(spr_pixel,0,crea[f].myX,crea[f].myY,1,1,0,c_orange,1);
+			draw_sprite_ext(spr_pixel2,0,crea[f].myX + 0.5,crea[f].myY + 0.5,0.6,0.6,0,c_orange,1);
 		} else if(crea[f].myType == 2) {
-			draw_sprite_ext(spr_pixel,0,crea[f].myX,crea[f].myY,1,1,0,c_fuchsia,1);
+			draw_sprite_ext(spr_pixel2,0,crea[f].myX + 0.5,crea[f].myY + 0.5,1,1,0,c_fuchsia,1);
 		} else if(crea[f].myType == 3) {
-			draw_sprite_ext(spr_pixel,0,crea[f].myX,crea[f].myY,1,1,0,c_red,1);
+			draw_sprite_ext(spr_pixel2,0,crea[f].myX + 0.5,crea[f].myY + 0.5,0.85,0.85,0,c_red,1);
 		} else if(crea[f].myType == 4) {
-			draw_sprite_ext(spr_pixel,0,crea[f].myX,crea[f].myY,1,1,0,c_aqua,1);
+			draw_sprite_ext(spr_pixel2,0,crea[f].myX + 0.5,crea[f].myY + 0.5,0.25,0.25,0,c_aqua,1);
 		} else {
-			draw_sprite_ext(spr_pixel,0,crea[f].myX,crea[f].myY,1,1,0,c_blue,1);
+			draw_sprite_ext(spr_pixel2,0,crea[f].myX + 0.5,crea[f].myY + 0.5,0.4,0.4,0,c_blue,1);
 		}
-		//draw_text_transformed_colour(crea[f].myX,crea[f].myY,crea[f].myDir,0.05,0.05,0,c_black,c_black,c_black,c_black,1);
 	}
-	//draw_text_transformed(0,6,(1/(creaChild[0]/(creaFeed[0] - 1))) * (speciesCount[0][0]),0.2,0.2,0);
-	//draw_text_transformed(0,10,speciesCount[3][0],0.5,0.5,0);
 }
+// ---------------------------DRAW HOUSE ---------------------------------
+var c_brown = merge_color(c_orange,c_black,0.5);
+draw_rectangle_colour(houseX1,houseY1,houseX2,houseY2,c_brown, c_brown, c_brown, c_brown,false);
+draw_sprite_ext(spr_graphs,0,chartX,chartY,2/32,2/32,0,c_white,1);
+draw_sprite_ext(spr_scope,0,teleX,teleY,2/32,2/32,0,c_white,1);
 
+// ---------------------------DRAW PLAYER ---------------------------------
 draw_sprite_ext(spr_pixel,0,plrX,plrY,1,1,0,c_yellow,1);
-draw_text_transformed_colour(plrX - 4,plrY - 4,plrHunger,0.05,0.05,0,c_yellow,c_yellow,c_yellow,c_yellow,1);
-draw_text_transformed_colour(plrX + 2,plrY - 4,plrProfit,0.05,0.05,0,c_yellow,c_yellow,c_yellow,c_yellow,1);
-draw_sprite_ext(spr_pixel,0,spearX,spearY,1,1,0,c_ltgray,1);
+draw_sprite_ext(spr_spear,0,plrX + 0.5,plrY + 0.5,spearLength * 0.15,0.15,spearDir,c_white,1);
 
-if(!true) {
-	grassAverage = 0;
-	for(s = 0;s < numbOfSpecies; s++) {
-		creaAverage[s] = 0;
-	}
-	for(f = 0; f < recordedSteps; f += 5) {
-		grassAverage += grassCount[f];
-		for(s = 0;s < numbOfSpecies; s++) {
-			creaAverage[s] += speciesCount[s][f];
-		}
-	}
-	for(s = 0;s < numbOfSpecies; s++) {
-		creaAverage[s] /= (recordedSteps/5);
-		creaStability[s] = 1;
-	}
-	grassAverage /= (recordedSteps/5);
-	for(f = 0; f < recordedSteps; f += 5) {
-		grassStability += sqrt(abs(grassCount[f] - grassAverage)/(grassMax));
-		
-		for(s = 0;s < numbOfSpecies; s++) {
-			creaStability[s] += sqrt(abs(speciesCount[s][f] - creaAverage[s])/(creaMax[s]));
-		}
-	}
-	grassStability /= (recordedSteps/5);
-	for(s = 0;s < numbOfSpecies; s++) {
-		creaStability[s] /= (recordedSteps/5);
-	}
-	
+// ---------------------------DRAW PARTICLES ---------------------------------
+part_system_drawit(partSys);
+
+// ---------------------------DRAW UI ---------------------------------
+
+// hunger
+draw_set_font(Font3)
+draw_healthbar(camX + (0.02 * camW),camY + (0.02 * camH),camX + (0.35 * camW),camY + (0.07 * camH),(plrHunger/plrHungerMax) * 100,c_black,c_red,c_red,0,true,false);
+draw_set_colour(c_black);
+draw_text_transformed(camX + (0.02 * camW),camY + (0.015 * camH),"HUNGER",0.05,0.05,0);
+draw_set_colour(c_white);
+
+// lives
+
+for(f =  0; f < plrMaxLives; f++) {
+	draw_sprite_ext(spr_life,f < plrLives,camX + ((0.02 + (0.05 * f)) * camW),camY + (0.08 * camH),0.003 * camW,0.003 * camW,0,c_white,1);
 }
-if(!true) {
+
+// profit number
+draw_set_colour(merge_colour(c_yellow,c_black,0.5))
+draw_text_transformed(camX + (0.5 * camW) - (string_width(plrProfit) * 0.5 * 0.125) - 0.2,camY + (0.02 * camH),string(plrProfit),0.125,0.125,0);
+draw_text_transformed(camX + (0.5 * camW) - (string_width(plrProfit) * 0.5 * 0.125),camY + (0.02 * camH) - 0.2,string(plrProfit),0.125,0.125,0);
+draw_text_transformed(camX + (0.5 * camW) - (string_width(plrProfit) * 0.5 * 0.125) + 0.2,camY + (0.02 * camH),string(plrProfit),0.125,0.125,0);
+draw_text_transformed(camX + (0.5 * camW) - (string_width(plrProfit) * 0.5 * 0.125),camY + (0.02 * camH) + 0.2,string(plrProfit),0.125,0.125,0);
+draw_set_colour(c_yellow);
+draw_text_transformed(camX + (0.5 * camW) - (string_width(plrProfit) * 0.5 * 0.125),camY + (0.02 * camH),string(plrProfit),0.125,0.125,0);
+
+// Death text
+
+if(deathAnim > 0) {
+	draw_set_colour(c_red);
+	var word = "EATEN!";
+	if(plrHunger <= 0) {
+		word = "STARVED!";
+	}
+	draw_text_transformed(camX + (0.5 * camW) - (string_width(word) * 0.5 * 0.125),camY + (0.5 * camH) - (string_height(word) * 0.5 * 0.125),word,0.125,0.125,0);
+}
+
+// --------------------------- DRAW GRAPHS ---------------------------------
+if(graphView) {
 	draw_set_colour(c_black)
 	draw_rectangle(0,0,room_width,room_height,false);
 	draw_set_colour(c_lime)
-	draw_text_transformed(0,0,grassStability,0.1,0.1,0);
-	for(f = 5; f < recordedSteps; f += 5) {
-		//draw_sprite_ext(spr_pixel,0,(0.1 + (((recordedSteps - f)/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[1][f]/creaMax[1]) * 0.8)) * room_height,0.1,0.1,0,c_red,1)
-		draw_line_width((0.1 + (((recordedSteps - f)/recordedSteps) * 0.8)) * room_width,(0.9 - ((grassCount[f]/grassMax) * 0.8)) * room_height,(0.1 + (((recordedSteps - (f - 5))/recordedSteps) * 0.8)) * room_width,(0.9 - ((grassCount[f - 5]/grassMax) * 0.8)) * room_height,0.1);
+	var trueRecSteps = min(recordedSteps,floor(gameTime/4));
+	draw_graph(0.1 * room_width,0.1 * room_height,0.9 * room_width, 0.9 * room_height,grassMax,grassCount,c_lime,trueRecSteps,1);
+	colors = [c_white,c_orange,c_fuchsia,c_red,c_aqua,c_blue];
+	for(e = 0; e < numbOfSpecies; e++) {
+		draw_graph(0.1 * room_width,0.1 * room_height,0.9 * room_width, 0.9 * room_height,creaMax[e],speciesCount[e],colors[e],trueRecSteps,1);
 	}
-	draw_set_colour(c_white)
-	draw_text_transformed(0,2,creaStability[0],0.1,0.1,0);
-	for(f = 5; f < recordedSteps; f += 5) {
-		//draw_sprite_ext(spr_pixel,0,(0.1 + (((recordedSteps - f)/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[1][f]/creaMax[1]) * 0.8)) * room_height,0.1,0.1,0,c_red,1)
-		draw_line_width((0.1 + (((recordedSteps - f)/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[0][f]/creaMax[0]) * 0.8)) * room_height,(0.1 + (((recordedSteps - (f - 5))/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[0][f - 5]/creaMax[0]) * 0.8)) * room_height,0.1);
-	}
-	draw_line_width(0.1 * room_width,(0.9 - ((baseCount[0]/creaMax[0]) * 0.8)) * room_height,0.9 * room_width,(0.9 - ((baseCount[0]/creaMax[0]) * 0.8)) * room_height,0.1);
-	draw_set_colour(c_orange)
-	draw_text_transformed(0,4,creaStability[1],0.1,0.1,0);
-	for(f = 5; f < recordedSteps; f += 5) {
-		//draw_sprite_ext(spr_pixel,0,(0.1 + (((recordedSteps - f)/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[1][f]/creaMax[1]) * 0.8)) * room_height,0.1,0.1,0,c_red,1)
-		draw_line_width((0.1 + (((recordedSteps - f)/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[1][f]/creaMax[1]) * 0.8)) * room_height,(0.1 + (((recordedSteps - (f - 5))/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[1][f - 5]/creaMax[1]) * 0.8)) * room_height,0.1);
-	}
-	draw_line_width(0.1 * room_width,(0.9 - ((baseCount[1]/creaMax[1]) * 0.8)) * room_height,0.9 * room_width,(0.9 - ((baseCount[1]/creaMax[1]) * 0.8)) * room_height,0.1);
-	draw_set_colour(c_fuchsia)
-	draw_text_transformed(0,6,creaStability[2],0.1,0.1,0);
-	for(f = 5; f < recordedSteps; f += 5) {
-		//draw_sprite_ext(spr_pixel,0,(0.1 + (((recordedSteps - f)/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[1][f]/creaMax[1]) * 0.8)) * room_height,0.1,0.1,0,c_red,1)
-		draw_line_width((0.1 + (((recordedSteps - f)/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[2][f]/creaMax[2]) * 0.8)) * room_height,(0.1 + (((recordedSteps - (f - 5))/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[2][f - 5]/creaMax[2]) * 0.8)) * room_height,0.1);
-	}
-	draw_line_width(0.1 * room_width,(0.9 - ((baseCount[2]/creaMax[2]) * 0.8)) * room_height,0.9 * room_width,(0.9 - ((baseCount[2]/creaMax[2]) * 0.8)) * room_height,0.1);
-	draw_set_colour(c_red)
-	draw_text_transformed(0,8,creaStability[3],0.1,0.1,0);
-	for(f = 5; f < recordedSteps; f += 5) {
-		//draw_sprite_ext(spr_pixel,0,(0.1 + (((recordedSteps - f)/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[1][f]/creaMax[1]) * 0.8)) * room_height,0.1,0.1,0,c_red,1)
-		draw_line_width((0.1 + (((recordedSteps - f)/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[3][f]/creaMax[3]) * 0.8)) * room_height,(0.1 + (((recordedSteps - (f - 5))/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[3][f - 5]/creaMax[3]) * 0.8)) * room_height,0.1);
-	}
-	draw_line_width(0.1 * room_width,(0.9 - ((baseCount[3]/creaMax[3]) * 0.8)) * room_height,0.9 * room_width,(0.9 - ((baseCount[3]/creaMax[3]) * 0.8)) * room_height,0.1);
-	draw_set_colour(c_aqua)
-	draw_text_transformed(0,8,creaStability[4],0.1,0.1,0);
-	for(f = 5; f < recordedSteps; f += 5) {
-		//draw_sprite_ext(spr_pixel,0,(0.1 + (((recordedSteps - f)/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[1][f]/creaMax[1]) * 0.8)) * room_height,0.1,0.1,0,c_red,1)
-		draw_line_width((0.1 + (((recordedSteps - f)/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[4][f]/creaMax[4]) * 0.8)) * room_height,(0.1 + (((recordedSteps - (f - 5))/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[4][f - 5]/creaMax[4]) * 0.8)) * room_height,0.1);
-	}
-	draw_line_width(0.1 * room_width,(0.9 - ((baseCount[4]/creaMax[4]) * 0.8)) * room_height,0.9 * room_width,(0.9 - ((baseCount[4]/creaMax[4]) * 0.8)) * room_height,0.1);
-	draw_set_colour(c_blue)
-	draw_text_transformed(0,8,creaStability[5],0.1,0.1,0);
-	for(f = 5; f < recordedSteps; f += 5) {
-		//draw_sprite_ext(spr_pixel,0,(0.1 + (((recordedSteps - f)/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[1][f]/creaMax[1]) * 0.8)) * room_height,0.1,0.1,0,c_red,1)
-		draw_line_width((0.1 + (((recordedSteps - f)/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[5][f]/creaMax[5]) * 0.8)) * room_height,(0.1 + (((recordedSteps - (f - 5))/recordedSteps) * 0.8)) * room_width,(0.9 - ((speciesCount[5][f - 5]/creaMax[5]) * 0.8)) * room_height,0.1);
-	}
-	draw_line_width(0.1 * room_width,(0.9 - ((baseCount[5]/creaMax[5]) * 0.8)) * room_height,0.9 * room_width,(0.9 - ((baseCount[5]/creaMax[5]) * 0.8)) * room_height,0.1);
-	draw_set_colour(c_white)
-	
+	draw_sprite_ext(spr_foodChain,1,camX,camY,camW/1366,camH/768,0,c_white,1);
 }
-/*for(f = 0;f < gridWidth/10; f++) {
-	for(e = 0;e < gridHeight/10; e++) {
-		draw_line_width(f * 10,e * 10,f * 10 + lengthdir_x(3,perl[f][e]),e * 10 + lengthdir_y(3,perl[f][e]),0.1);
-	}
+
+// Exit menu text
+
+if(envView || graphView) {
+	draw_text_transformed(camX + (0.5 * camW) - (string_width("ESC to Close") * 0.5 * 0.1),camY + camH - (0.05 * camH) - (string_height("ESC to Close") * 0.1),"ESC to Close",0.1,0.1,0);
 }
-if(!keyboard_check(ord("E"))) {
