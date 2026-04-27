@@ -2,50 +2,36 @@ randomise();
 cellSize = 1;
 gridWidth = room_width/cellSize;
 gridHeight = room_height/cellSize
-for(f = 0;f < gridWidth; f++) {
-	for(e = 0;e < gridHeight; e++) {
+for(f = 0;f < gridWidth + 2; f++) {
+	for(e = 0;e < gridHeight + 2; e++) {
 		grid[f][e] = 4;
 	}
 }
-houseX1 = 10;
-houseX2 = 18;
-houseY1 = 10;
-houseY2 = 18;
+houseW = 10;
+houseH = 10;
+sounds = [snd_rabbit,snd_coyote,snd_elk,snd_wolf,snd_mouse,snd_ferret];
+houseX1 = floor((room_width - houseW)/2);
+houseX2 = floor((room_width + houseW)/2);
+houseY1 = floor((room_height - houseH)/2);
+houseY2 = floor((room_height + houseH)/2);
 grassSpreadChance = 0.001;
 grassGrowthChance = 0.15;
-numbOfSpecies = 6
+numbOfSpecies = 6;
+feedTrapCount = 0;
+feedTrapList = array_create(32, noone);
+miniGraph = true;
+miniFoodChain = false;
+for(f = 0; f < numbOfSpecies; f++) {
+	feedTrapsPlaced[f] = 0;
+}
 graphView = false;
-creaFeed[0] = 1.8;
-creaFeed[1] = 18;
-creaFeed[2] = 2;
-creaFeed[3] = 12;
-creaFeed[4] = 1.95;
-creaFeed[5] = 25;
-baseCreaFeed[0] = creaFeed[0];
-baseCreaFeed[1] = creaFeed[1];
-baseCreaFeed[2] = creaFeed[2];
-baseCreaFeed[3] = creaFeed[3];
-baseCreaFeed[4] = creaFeed[4];
-baseCreaFeed[5] = creaFeed[5];
-creaChild[0] = 160 * 1.5;
-creaChild[1] = 200 * 1.2;
-creaChild[2] = 300;
-creaChild[3] = 350 * 1.5;
-creaChild[4] = 150;
-creaChild[5] = 100 * 1.2;
-creaStarve[0] = -400;//15;
-creaStarve[1] = -200;
-creaStarve[2] = -20;
-creaStarve[3] = -250;
-creaStarve[4] = -10;//15;
-creaStarve[5] = -300;
+creaFeed = [1.8, 70, 2, 25, 1.95, 80];
+baseCreaFeed = [creaFeed[0], creaFeed[1], creaFeed[2], creaFeed[3], creaFeed[4], creaFeed[5]];
+creaChild = [160 * 1.5, 240 * 1.2, 400, 350 * 1.5, 150, 90 * 1.2];
+creaStarve = [-400, -200,-20, -250, -10, -300];
 reproductiveAge = 5;
-baseCount[0] = 0.5 * 100;
-baseCount[1] = 0.5 * 7;
-baseCount[2] = 0.5 * 14;
-baseCount[3] = 0.5 * 2;
-baseCount[4] = 0.5 * 60;
-baseCount[5] = 0.5 * 9;
+baseCount = [50, 4, 7, 1, 40, 4];
+creaSize = [0.35, 0.6, 1, 0.85, 0.25, 0.4];
 camW = 32 * 2;
 camH = 18 * 2;
 spearX = -100;
@@ -57,26 +43,31 @@ plrDir = 0;
 plrChoice = false;
 plrHunger = 50
 plrHungerMax = 50;
+hungerRate = 0.075;
 plrFeed = 15;
 plrProfit = 0;
-plrLives = 1;
-plrMaxLives = 1;
+plrLives = 2;
+plrMaxLives = 2;
 camX = 0;
 camY = 0;
 camW = room_width;
 camH = room_height;
-chartX = houseX1 + 1;
-chartY = houseY1 + 1;
-teleX = houseX1 + 5;
-teleY = houseY1 + 1;
-respawnX = floor(houseX1 + (houseX2 - houseX1)/2);
-respawnY = floor(houseY1 + (houseY2 - houseY1) * 0.66);
+chartX = houseX1 + 2;
+chartY = houseY1 + 2;
+teleX = houseX1 + 6;
+teleY = houseY1 + 2;
+shopX = houseX1 + 6;
+shopY = houseY1 + 6;
+respawnX = floor(houseX1 + 3);
+respawnY = floor(houseY1 + 7);
 plrX = respawnX;
 plrY = respawnY;
 viewClosed = false;
 deathAnim = -1;
+shopView = false;
+trapSpin = 0;
 
-gameTime = 0;
+gameTime = -1;
 creaCount = 0;
 stepCounter = 0;
 repeat(baseCount[0]) {
@@ -112,12 +103,21 @@ repeat(baseCount[5]) {
 	crea[creaCount].age = irandom_range(0,reproductiveAge);
 	creaCount++;
 }
+/*repeat(20) {
+	var type = irandom_range(0, numbOfSpecies - 1);
+	feedTrapList[feedTrapCount] = create_feeder_trap(irandom_range(0,1),irandom_range(0,gridWidth - 1),irandom_range(0,gridHeight - 1),type);
+	feedTrapCount++;
+	feedTrapsPlaced[type]++;
+}*/
+timeLeft = 6 * 60
 recordedSteps = 3000;
 grassMax = 0;
 profitMax = 0;
 for(f = 0;f < numbOfSpecies; f++) {
 	creaMax[f] = 0;
 	creaStability[f] = 0;
+	feeders[f] = 0;
+	traps[f] = 0;
 }
 	
 grassCount = array_create(recordedSteps, 0);
@@ -126,9 +126,6 @@ for(s = 0; s < numbOfSpecies; s++) {
 	speciesCount[s] = array_create(recordedSteps, 0);
 }
 grassStability = 0;
-creaSize[0] = 1;
-creaSize[1] = 1;
-creaSize[2] = 4;
 
 envView = false;
 testedScenarios = 100;
@@ -169,6 +166,23 @@ part_type_speed(partType[4],0.05,0.2,-0.01,0);
 part_type_size(partType[4],0.003,0.008,0,0);
 part_type_colour1(partType[5],c_blue)
 
+partType2[1] = part_type_create();
+part_type_size(partType2[1],0.002,0.010,0,0);
+part_type_colour1(partType2[1],c_orange)
+part_type_shape(partType2[1],pt_shape_square);
+part_type_direction(partType2[1],0,360,0,0);
+part_type_speed(partType2[1],0.08,0.3,-0.05,0);
+part_type_life(partType2[1],20,60);
+part_type_alpha1(partType2[1],0.3);
+partType2[3] = part_type_create();
+part_type_size(partType2[3],0.002,0.010,0,0);
+part_type_colour1(partType2[3],c_red)
+part_type_shape(partType2[3],pt_shape_square);
+part_type_direction(partType2[3],0,360,0,0);
+part_type_speed(partType2[3],0.08,0.3,-0.05,0);
+part_type_life(partType2[3],20,60);
+part_type_alpha1(partType2[3],0.3);
+
 partTypePlr = part_type_create();
 part_type_size(partTypePlr,0.01,0.03,0,0);
 part_type_colour1(partTypePlr,c_yellow)
@@ -176,6 +190,12 @@ part_type_shape(partTypePlr,pt_shape_sphere);
 part_type_direction(partTypePlr,0,360,0,0);
 part_type_speed(partTypePlr,0.1,0.5,-0.01,0);
 part_type_life(partTypePlr,10,60);
+
+moneyPromptX = 0;
+moneyPromptY = 0;
+moneyPromptAlpha = 0;
+placeView = false;
+stepTime = 0;
 //perlin_fill_grid(grid,room_width,room_height,10,10);
 
 //grid = array_create_ext(gridWidth,array_create_ext(gridHeight, irandom_range(0,1)));

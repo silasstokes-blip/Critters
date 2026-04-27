@@ -17,8 +17,8 @@
   ],
   "name":"roomTut",
   "parent":{
-    "name":"CRITTERS",
-    "path":"CRITTERS.yyp",
+    "name":"Rooms",
+    "path":"folders/Rooms.yy",
   },
   "parentRoom":null,
   "physicsSettings":{

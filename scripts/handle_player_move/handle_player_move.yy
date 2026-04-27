@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"handle_player_move",
   "parent":{
-    "name":"CRITTERS",
-    "path":"CRITTERS.yyp",
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

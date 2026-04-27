@@ -7,7 +7,10 @@ function simulate_creatures(turnType){
 			
 		if(clamp(creaX,floor(spearX) - 2,floor(spearX) + 2) == creaX && clamp(creaY,floor(spearY) - 2,floor(spearY) + 2) == creaY) {
 			myCrea.eaten = true;
-			plrChoice = true;
+			plrHunger += ceil(power(creaSize[creaType] * 4,2)) * 2;
+			plrProfit += ceil(power(creaSize[creaType] * 4,2));
+			audio_play_sound_at(choose(snd_stab,snd_stab2,snd_stab3,snd_stab4),creaX + 0.5,creaY + 0.5,0,5,12,1,0,1,sqrt(creaSize[creaType]));
+			audio_play_sound_at(sounds[creaType],creaX + 0.5,creaY + 0.5,0,5,12,1,0,1,sqrt(creaSize[creaType]));
 			part_particles_create(partSys,creaX + 0.5,creaY + 0.5,partType[myCrea.myType],150);
 		}
 
@@ -15,6 +18,10 @@ function simulate_creatures(turnType){
 		if(!myCrea.eaten) {
 			
 			speciesCount[creaType][0] += 1;
+			
+			if(creaType == 1 || creaType == 3) {
+				part_particles_create(partSys,creaX + 0.5,creaY + 0.5,partType2[creaType],5);
+			}
 			
 			// Rabbits and Elk
 			if(turnType == 0) {
@@ -34,26 +41,33 @@ function simulate_creatures(turnType){
 				
 					// find prey target
 					var nearestPrey = -1;
+					var antiprey = false;
 				
 					// set search distance and prey targets for each species
-					var preyDistance = 4;
+					var preyDistance = 5 + ((speciesCount[0][1] > baseCount[0] * 2) * 1000) - ((speciesCount[0][1] < baseCount[0] * 0.6) * 3);
 					var chaseTargets = [0];
 					var foodTargets = [0, 4];
 				
 					if(creaType == 3) { // Wolf
-						preyDistance = 15; 
-						chaseTargets = [0, 1, 2];
+						preyDistance = 15 + ((speciesCount[2][1] > baseCount[2] * 2) * 1000) - ((speciesCount[2][1] < baseCount[2] * 0.6) * 10); 
+						chaseTargets = [2];
 						foodTargets = [0, 1, 2];
+						if(speciesCount[1][1] <= 2) {
+							foodTargets = [0, 2];
+						}
+						
 					} 
 				
 					if(creaType == 5) { // Ferret
-						preyDistance = 5; 
+						preyDistance = 10 + ((speciesCount[4][1] > baseCount[4] * 2) * 1000) - ((speciesCount[4][1] < baseCount[4] * 0.6) * 7); 
 						chaseTargets = [4];
 						foodTargets = [4];
+						antiprey = false;
 					} 
 					
 					if((creaType == 1 || creaType == 3) && (clamp(round(plrX),creaX - 1, creaX + 1) == round(plrX)) && clamp(round(plrY),creaY - 1, creaY + 1) == round(plrY)) {
 						deathAnim = 120;
+						myCrea.blink = 1;
 						part_particles_create(partSys,plrX,plrY,partTypePlr,200);
 						plrX = -1000;
 						plrY = -1000;
@@ -63,33 +77,53 @@ function simulate_creatures(turnType){
 				
 				
 					// run through all other creatures to find nearest prey target and eat colliding pray
-					for(e = 0; e < creaCount; e++) {
-						if(!crea[e].eaten) {
+					var searchLoops = 0;
+					do {
+						for(e = 0; e < creaCount; e++) {
+							if(!crea[e].eaten) {
 						
-							// set new prey target
-							if(abs(crea[e].myX - myCrea.myX) + abs(crea[e].myY - myCrea.myY) < preyDistance && array_contains(chaseTargets, crea[e].myType)) {
-								preyDistance = abs(crea[e].myX - myCrea.myX) + abs(crea[e].myY - myCrea.myY);
-								nearestPrey = e;
-							}
+								// set new prey target
+								if(abs(crea[e].myX - myCrea.myX) + abs(crea[e].myY - myCrea.myY) < preyDistance && array_contains(chaseTargets, crea[e].myType)) {
+									preyDistance = abs(crea[e].myX - myCrea.myX) + abs(crea[e].myY - myCrea.myY);
+									nearestPrey = e;
+									if((speciesCount[crea[e].myType][1] < baseCount[crea[e].myType] * 0.25)) {antiprey = true;}
+									else {antiprey = false;}
+								}
 					
-							// eat colliding critter
-							if(abs(crea[e].myX - myCrea.myX) <= 1 && abs(crea[e].myY - myCrea.myY) <= 1 && array_contains(foodTargets, crea[e].myType)) {
-								crea[e].eaten = true;
-								part_particles_create(partSys,crea[e].myX + 0.5,crea[e].myY + 0.5,partType[crea[e].myType],100);
-								myCrea.myHunger += creaFeed[myCrea.myType] * (1 + ((myCrea.myHunger < 0) * 0.5)) * myCrea.feedMult;
-								e = creaCount;
+								// eat colliding critter
+								if(abs(crea[e].myX - myCrea.myX) <= 1 && abs(crea[e].myY - myCrea.myY) <= 1 && array_contains(foodTargets, crea[e].myType)) {
+									crea[e].eaten = true;
+									part_particles_create(partSys,crea[e].myX + 0.5,crea[e].myY + 0.5,partType[crea[e].myType],100);
+									audio_play_sound_at(choose(snd_stab,snd_stab2,snd_stab3,snd_stab4),crea[e].myX + 0.5,crea[e].myY + 0.5,0,5,12,1,0,1,sqrt(creaSize[creaType]));
+									audio_play_sound_at(sounds[crea[e].myType],creaX + 0.5,creaY + 0.5,0,5,12,1,0,1,sqrt(creaSize[creaType]));
+									
+									myCrea.myHunger += creaFeed[myCrea.myType] * (1 + ((myCrea.myHunger < 0) * 0.5)) * myCrea.feedMult * creaSize[crea[e].myType];
+									e = creaCount;
+								}
 							}
 						}
-					}
+						searchLoops += 1;
+						chaseTargets = [0,2];
+					} until(creaType != 3 || searchLoops >= 2 || nearestPrey != -1);
 				
 					// point direction to target
 					if(nearestPrey != -1) {
-						if(abs(crea[nearestPrey].myX - creaX) < abs(crea[nearestPrey].myY - creaY)) {
-							if(crea[nearestPrey].myY > creaY) { myCrea.myDir = 3;} 
-							else {myCrea.myDir = 1;}
+						if(!antiprey) {
+							if(abs(crea[nearestPrey].myX - creaX) < abs(crea[nearestPrey].myY - creaY)) {
+								if(crea[nearestPrey].myY > creaY) { myCrea.myDir = 3;} 
+								else {myCrea.myDir = 1;}
+							} else {
+								if(crea[nearestPrey].myX > creaX) { myCrea.myDir = 0;} 
+								else {myCrea.myDir = 2;}
+							}
 						} else {
-							if(crea[nearestPrey].myX > creaX) { myCrea.myDir = 0;} 
-							else {myCrea.myDir = 2;}
+							if(abs(crea[nearestPrey].myX - creaX) < abs(crea[nearestPrey].myY - creaY)) {
+								if(crea[nearestPrey].myY > creaY) { myCrea.myDir = 1;} 
+								else {myCrea.myDir = 3;}
+							} else {
+								if(crea[nearestPrey].myX > creaX) { myCrea.myDir = 2;} 
+								else {myCrea.myDir = 0;}
+							}
 						}
 					
 					}
@@ -105,6 +139,22 @@ function simulate_creatures(turnType){
 						grid[floor(creaX)][floor(creaY)] -= 1;
 					}
 				}
+				
+				if(feedTrapsPlaced[creaType] > 0) {
+					for(e = 0; e < feedTrapCount; e++) {
+						if(feedTrapList[e].myTarget == creaType && abs(feedTrapList[e].myX - creaX) <= 1 && abs(feedTrapList[e].myY - creaY) <= 1) {
+							if(feedTrapList[e].myType == 1) {//trap
+								myCrea.myHunger = -100000;
+								plrProfit += ceil(power(creaSize[creaType] * 4,2));
+								audio_play_sound_at(choose(snd_stab,snd_stab2,snd_stab3,snd_stab4),creaX + 0.5,creaY + 0.5,0,5,12,1,0,1,sqrt(creaSize[creaType]));
+								audio_play_sound_at(sounds[creaType],creaX + 0.5,creaY + 0.5,0,5,12,1,0,1,sqrt(creaSize[creaType]));
+							}
+							if(feedTrapList[e].myType == 0 && myCrea.age >= reproductiveAge) {//feeder
+								myCrea.myHunger = 100000;
+							}
+						}
+					}
+				}
 			
 				// Randomly turn creature
 				if(irandom_range(1,10) == 1) {
@@ -112,8 +162,9 @@ function simulate_creatures(turnType){
 				}
 			
 				// If well-fed and sexually mature, have child
-				if(myCrea.myHunger >= myCrea.childThreshold && myCrea.age > reproductiveAge) {
+				if(myCrea.myHunger >= myCrea.childThreshold && myCrea.age > reproductiveAge && creaCount < 1000) {
 					myCrea.myHunger = -2;
+					myCrea.age = 0;
 					creaCount += 1;
 					crea[creaCount - 1] = create_creature(creaType,creaX,creaY);
 					while(crea[creaCount - 1].myDir = myCrea.myDir) {
@@ -122,7 +173,7 @@ function simulate_creatures(turnType){
 				}
 			
 				// increment age
-				myCrea.age += 1;
+				myCrea.age += 2/global.gameSpeed;
 			
 				// turn if colliding with wall
 				var projX = creaX;
@@ -141,31 +192,42 @@ function simulate_creatures(turnType){
 					if(myCrea.myDir == 3) {projY += 1;}
 				}
 			}
-			
+			if(myCrea.blink > -1) {
+				myCrea.blink -= 0.1;
+				if(myCrea.blink < 0) {
+					myCrea.blink = 1;
+				}
+				if(deathAnim <= 0) {
+					myCrea.blink = -1;
+				}
+			}
 			// move one tile in proper direction
 			if(myCrea.myDir == 0) {
-				myCrea.myX += 0.5;
+				myCrea.myX += 1/global.gameSpeed;
 			}
 			if(myCrea.myDir == 1) {
-				myCrea.myY -= 0.5;
+				myCrea.myY -= 1/global.gameSpeed;
 			}
 			if(myCrea.myDir == 2) {
-				myCrea.myX -= 0.5;
+				myCrea.myX -= 1/global.gameSpeed;
 			}
 			if(myCrea.myDir == 3) {
-				myCrea.myY += 0.5;
+				myCrea.myY += 1/global.gameSpeed;
 			}
 			
 			// Lower hunger
-			myCrea.myHunger -= 0.5;
+			myCrea.myHunger -= 1/global.gameSpeed;
 			
 			// if starving or attacked by player after moving, die
 			if(clamp(creaX,floor(spearX) - 2,floor(spearX) + 2) == creaX && clamp(creaY,floor(spearY) - 2,floor(spearY) + 2) == creaY) {
-				plrChoice = true;
+				plrHunger += ceil(power(creaSize[creaType] * 4,2)) * 2;
+				plrProfit += ceil(power(creaSize[creaType] * 4,2));
+				audio_play_sound_at(choose(snd_stab,snd_stab2,snd_stab3,snd_stab4),creaX + 0.5,creaY + 0.5,0,5,12,1,0,1,sqrt(creaSize[creaType]));
+				audio_play_sound_at(sounds[creaType],creaX + 0.5,creaY + 0.5,0,5,12,1,0,1,sqrt(creaSize[creaType]));
 				myCrea.eaten = true;
 				part_particles_create(partSys,creaX + 0.5,creaY + 0.5,partType[creaType],150);
 			}
-			if(myCrea.myHunger < myCrea.deathThreshold) {
+			if(myCrea.myHunger < myCrea.deathThreshold && ((creaType != 3 || speciesCount[creaType][0] > 1 || (speciesCount[0][1] == 0 && speciesCount[2][1] == 0)) && (creaType != 1 || speciesCount[creaType][0] > 2) && (creaType != 5 || speciesCount[creaType][0] > 2 || speciesCount[4][1] == 0))) {
 				myCrea.eaten = true;
 				part_particles_create(partSys,creaX + 0.5,creaY + 0.5,partType[creaType],100);
 			}

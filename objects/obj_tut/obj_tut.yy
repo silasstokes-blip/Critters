@@ -9,8 +9,8 @@
   "name":"obj_tut",
   "overriddenProperties":[],
   "parent":{
-    "name":"CRITTERS",
-    "path":"CRITTERS.yyp",
+    "name":"Objects",
+    "path":"folders/Objects.yy",
   },
   "parentObjectId":null,
   "persistent":false,

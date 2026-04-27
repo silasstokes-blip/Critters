@@ -230,8 +230,8 @@
   "maintainGms1Font":false,
   "name":"Font2",
   "parent":{
-    "name":"CRITTERS",
-    "path":"CRITTERS.yyp",
+    "name":"Fonts",
+    "path":"folders/Fonts.yy",
   },
   "pointRounding":0,
   "ranges":[
