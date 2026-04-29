@@ -1,5 +1,5 @@
 randomise();
-cellSize = 1;
+cellSize = 8;
 gridWidth = room_width/cellSize;
 gridHeight = room_height/cellSize
 for(f = 0;f < gridWidth + 2; f++) {
@@ -10,10 +10,10 @@ for(f = 0;f < gridWidth + 2; f++) {
 houseW = 10;
 houseH = 10;
 sounds = [snd_rabbit,snd_coyote,snd_elk,snd_wolf,snd_mouse,snd_ferret];
-houseX1 = floor((room_width - houseW)/2);
-houseX2 = floor((room_width + houseW)/2);
-houseY1 = floor((room_height - houseH)/2);
-houseY2 = floor((room_height + houseH)/2);
+houseX1 = floor((gridWidth - houseW)/2);
+houseX2 = floor((gridWidth + houseW)/2);
+houseY1 = floor((gridHeight - houseH)/2);
+houseY2 = floor((gridHeight + houseH)/2);
 grassSpreadChance = 0.001;
 grassGrowthChance = 0.15;
 numbOfSpecies = 6;
@@ -32,8 +32,6 @@ creaStarve = [-400, -200,-20, -250, -10, -300];
 reproductiveAge = 5;
 baseCount = [50, 4, 7, 1, 40, 4];
 creaSize = [0.35, 0.6, 1, 0.85, 0.25, 0.4];
-camW = 32 * 2;
-camH = 18 * 2;
 spearX = -100;
 spearY = -100;
 spearLength = 0;
@@ -50,8 +48,8 @@ plrLives = 2;
 plrMaxLives = 2;
 camX = 0;
 camY = 0;
-camW = room_width;
-camH = room_height;
+camW = 64 * 2 * cellSize;
+camH = 36 * 2 * cellSize;
 chartX = houseX1 + 2;
 chartY = houseY1 + 2;
 teleX = houseX1 + 6;
@@ -145,50 +143,50 @@ part_system_automatic_draw(partSys,false);
 
 for(f = 0; f < numbOfSpecies; f++) {
 	partType[f] = part_type_create();
-	part_type_size(partType[f],0.005,0.015,0,0);
+	part_type_size(partType[f],0.005 * cellSize,0.015 * cellSize,0,0);
 	part_type_colour1(partType[f],c_white)
 	part_type_shape(partType[f],pt_shape_sphere);
 	part_type_direction(partType[f],0,360,0,0);
-	part_type_speed(partType[f],0.08,0.3,-0.01,0);
+	part_type_speed(partType[f],0.08 * cellSize,0.3 * cellSize,-0.01 * cellSize,0);
 	part_type_life(partType[f],5,25);
 }
 part_type_colour1(partType[1],c_orange)
-part_type_speed(partType[1],0.1,0.5,-0.01,0);
-part_type_size(partType[1],0.008,0.020,0,0);
+part_type_speed(partType[1],0.1 * cellSize,0.5 * cellSize,-0.01 * cellSize,0);
+part_type_size(partType[1],0.008 * cellSize,0.020 * cellSize,0,0);
 part_type_colour1(partType[2],c_fuchsia)
-part_type_speed(partType[2],0.12,0.6,-0.01,0);
-part_type_size(partType[2],0.01,0.025,0,0);
+part_type_speed(partType[2],0.12 * cellSize,0.6 * cellSize,-0.01 * cellSize,0);
+part_type_size(partType[2],0.01 * cellSize,0.025 * cellSize,0,0);
 part_type_colour1(partType[3],c_red)
-part_type_speed(partType[3],0.12,0.6,-0.01,0);
-part_type_size(partType[3],0.01,0.025,0,0);
+part_type_speed(partType[3],0.12 * cellSize,0.6 * cellSize,-0.01 * cellSize,0);
+part_type_size(partType[3],0.01 * cellSize,0.025 * cellSize,0,0);
 part_type_colour1(partType[4],c_aqua)
-part_type_speed(partType[4],0.05,0.2,-0.01,0);
-part_type_size(partType[4],0.003,0.008,0,0);
+part_type_speed(partType[4],0.05 * cellSize,0.2 * cellSize,-0.01 * cellSize,0);
+part_type_size(partType[4],0.003 * cellSize,0.008 * cellSize,0,0);
 part_type_colour1(partType[5],c_blue)
 
 partType2[1] = part_type_create();
-part_type_size(partType2[1],0.002,0.010,0,0);
+part_type_size(partType2[1],0.002 * cellSize,0.010 * cellSize,0,0);
 part_type_colour1(partType2[1],c_orange)
 part_type_shape(partType2[1],pt_shape_square);
 part_type_direction(partType2[1],0,360,0,0);
-part_type_speed(partType2[1],0.08,0.3,-0.05,0);
+part_type_speed(partType2[1],0.08 * cellSize,0.3 * cellSize,-0.05 * cellSize,0);
 part_type_life(partType2[1],20,60);
 part_type_alpha1(partType2[1],0.3);
 partType2[3] = part_type_create();
-part_type_size(partType2[3],0.002,0.010,0,0);
+part_type_size(partType2[3],0.002 * cellSize,0.010 * cellSize,0,0);
 part_type_colour1(partType2[3],c_red)
 part_type_shape(partType2[3],pt_shape_square);
 part_type_direction(partType2[3],0,360,0,0);
-part_type_speed(partType2[3],0.08,0.3,-0.05,0);
+part_type_speed(partType2[3],0.08 * cellSize,0.3 * cellSize,-0.05 * cellSize,0);
 part_type_life(partType2[3],20,60);
 part_type_alpha1(partType2[3],0.3);
 
 partTypePlr = part_type_create();
-part_type_size(partTypePlr,0.01,0.03,0,0);
+part_type_size(partTypePlr,0.01 * cellSize,0.03 * cellSize,0,0);
 part_type_colour1(partTypePlr,c_yellow)
 part_type_shape(partTypePlr,pt_shape_sphere);
 part_type_direction(partTypePlr,0,360,0,0);
-part_type_speed(partTypePlr,0.1,0.5,-0.01,0);
+part_type_speed(partTypePlr,0.1 * cellSize,0.5 * cellSize,-0.01 * cellSize,0);
 part_type_life(partTypePlr,10,60);
 
 moneyPromptX = 0;

@@ -11,7 +11,7 @@ function simulate_creatures(turnType){
 			plrProfit += ceil(power(creaSize[creaType] * 4,2));
 			audio_play_sound_at(choose(snd_stab,snd_stab2,snd_stab3,snd_stab4),creaX + 0.5,creaY + 0.5,0,5,12,1,0,1,sqrt(creaSize[creaType]));
 			audio_play_sound_at(sounds[creaType],creaX + 0.5,creaY + 0.5,0,5,12,1,0,1,sqrt(creaSize[creaType]));
-			part_particles_create(partSys,creaX + 0.5,creaY + 0.5,partType[myCrea.myType],150);
+			part_particles_create(partSys,(creaX + 0.5) * cellSize,(creaY + 0.5) * cellSize,partType[myCrea.myType],150);
 		}
 
 		// if the creature is still alive
@@ -20,7 +20,7 @@ function simulate_creatures(turnType){
 			speciesCount[creaType][0] += 1;
 			
 			if(creaType == 1 || creaType == 3) {
-				part_particles_create(partSys,creaX + 0.5,creaY + 0.5,partType2[creaType],5);
+				part_particles_create(partSys,(creaX + 0.5) * cellSize,(creaY + 0.5) * cellSize,partType2[creaType],5);
 			}
 			
 			// Rabbits and Elk
@@ -67,8 +67,9 @@ function simulate_creatures(turnType){
 					
 					if((creaType == 1 || creaType == 3) && (clamp(round(plrX),creaX - 1, creaX + 1) == round(plrX)) && clamp(round(plrY),creaY - 1, creaY + 1) == round(plrY)) {
 						deathAnim = 120;
+						audio_play_sound(snd_eaten,1,0);
 						myCrea.blink = 1;
-						part_particles_create(partSys,plrX,plrY,partTypePlr,200);
+						part_particles_create(partSys,plrX * cellSize,plrY * cellSize,partTypePlr,200);
 						plrX = -1000;
 						plrY = -1000;
 					}
@@ -93,7 +94,7 @@ function simulate_creatures(turnType){
 								// eat colliding critter
 								if(abs(crea[e].myX - myCrea.myX) <= 1 && abs(crea[e].myY - myCrea.myY) <= 1 && array_contains(foodTargets, crea[e].myType)) {
 									crea[e].eaten = true;
-									part_particles_create(partSys,crea[e].myX + 0.5,crea[e].myY + 0.5,partType[crea[e].myType],100);
+									part_particles_create(partSys,(crea[e].myX + 0.5) * cellSize,(crea[e].myY + 0.5) * cellSize,partType[crea[e].myType],100);
 									audio_play_sound_at(choose(snd_stab,snd_stab2,snd_stab3,snd_stab4),crea[e].myX + 0.5,crea[e].myY + 0.5,0,5,12,1,0,1,sqrt(creaSize[creaType]));
 									audio_play_sound_at(sounds[crea[e].myType],creaX + 0.5,creaY + 0.5,0,5,12,1,0,1,sqrt(creaSize[creaType]));
 									
@@ -162,7 +163,7 @@ function simulate_creatures(turnType){
 				}
 			
 				// If well-fed and sexually mature, have child
-				if(myCrea.myHunger >= myCrea.childThreshold && myCrea.age > reproductiveAge && creaCount < 1000) {
+				if(myCrea.myHunger >= myCrea.childThreshold && myCrea.age > reproductiveAge && creaCount < 1500) {
 					myCrea.myHunger = -2;
 					myCrea.age = 0;
 					creaCount += 1;
@@ -225,11 +226,11 @@ function simulate_creatures(turnType){
 				audio_play_sound_at(choose(snd_stab,snd_stab2,snd_stab3,snd_stab4),creaX + 0.5,creaY + 0.5,0,5,12,1,0,1,sqrt(creaSize[creaType]));
 				audio_play_sound_at(sounds[creaType],creaX + 0.5,creaY + 0.5,0,5,12,1,0,1,sqrt(creaSize[creaType]));
 				myCrea.eaten = true;
-				part_particles_create(partSys,creaX + 0.5,creaY + 0.5,partType[creaType],150);
+				part_particles_create(partSys,(creaX + 0.5) * cellSize,(creaY + 0.5) * cellSize,partType[creaType],150);
 			}
 			if(myCrea.myHunger < myCrea.deathThreshold && ((creaType != 3 || speciesCount[creaType][0] > 1 || (speciesCount[0][1] == 0 && speciesCount[2][1] == 0)) && (creaType != 1 || speciesCount[creaType][0] > 2) && (creaType != 5 || speciesCount[creaType][0] > 2 || speciesCount[4][1] == 0))) {
 				myCrea.eaten = true;
-				part_particles_create(partSys,creaX + 0.5,creaY + 0.5,partType[creaType],100);
+				part_particles_create(partSys,(creaX + 0.5) * cellSize,(creaY + 0.5) * cellSize,partType[creaType],100);
 			}
 		}
 	}

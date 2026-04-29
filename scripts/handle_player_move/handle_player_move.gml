@@ -18,7 +18,7 @@ function handle_player_move(){
 	if(keyboard_check(ord("D"))) {
 		plrX += 0.5;
 	}
-	plrX = clamp(plrX, 0, room_width - 1);
-	plrY = clamp(plrY, 0, room_height - 1);
+	plrX = clamp(plrX, 0, gridWidth - 1);
+	plrY = clamp(plrY, 0, gridHeight - 1);
 	
 }

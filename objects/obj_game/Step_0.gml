@@ -89,7 +89,7 @@ if(spearTime > -1) {
 }
 if(mouse_check_button(mb_left) && spearTime = -1 && !envView) {
 	spearTime += 1;
-	spearDir = point_direction(plrX + 0.5,plrY + 0.5, mouse_x, mouse_y);
+	spearDir = point_direction(plrX + 0.5,plrY + 0.5, mouse_x/cellSize, mouse_y/cellSize);
 	spearLength = 1;
 }
 
@@ -111,7 +111,7 @@ if(!graphView && !shopView) {//keyboard_check_pressed(ord("J")) || keyboard_chec
 	
 		
 		profitCount[0] = plrProfit;
-		profitMax = plrProfit;
+		profitMax = max(plrProfit,plrProfit);
 	}
 	for(s = 0;s < numbOfSpecies; s++) {
 		speciesCount[s][0] = 0;
@@ -164,6 +164,7 @@ if(plrChoice) {
 // player starves to death
 if(plrHunger <= 0 && deathAnim == -1) {
 	deathAnim = 120;
+	audio_play_sound(snd_starved,1,0);
 	part_particles_create(partSys,plrX,plrY,partTypePlr,200);
 	plrX = -1000;
 	plrY = -1000;
@@ -205,10 +206,13 @@ if(envView) {
 	camW = room_width;
 	camH = room_height;
 } else if(deathAnim == -1) {
-	camX = plrX - camW/2 + 0.5;
-	camY = plrY - camH/2 + 0.5;
-	camW = 64;
-	camH = 36;
+	camX = (plrX * cellSize) - camW/2 + 0.5;
+	camY = (plrY * cellSize) - camH/2 + 0.5;
+	camW = 64 * cellSize;
+	camH = 36 * cellSize;
+}
+if(timeLeft < 10 && !audio_is_playing(snd_clock)) {
+	audio_play_sound(snd_clock,1,0);
 }
 camX = clamp(camX, 0, room_width - camW);
 camY = clamp(camY, 0, room_height - camH);

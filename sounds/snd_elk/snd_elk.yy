@@ -10,7 +10,7 @@
   "compression":0,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":0.49675736,
+  "duration":1.0422676,
   "exportDir":"",
   "name":"snd_elk",
   "parent":{

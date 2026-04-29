@@ -10,7 +10,7 @@
   "compression":0,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":0.0,
+  "duration":22.440794,
   "exportDir":"",
   "name":"snd_clock",
   "parent":{
@@ -21,6 +21,6 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"",
+  "soundFile":"snd_clock.mp3",
   "volume":1.0,
 }
