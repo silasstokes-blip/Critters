@@ -1,12 +1,11 @@
 function create_creature(newType,newX,newY){
 // TYPES
 // 0 - Rabbit
-// 1 - Wolf
-
-// STATES
-// 0 - default
-// 1 - hungry
-// 2 - horny
+// 1 - Coyote
+// 2 - Elk
+// 3 - Wolf
+// 4 - Mouse
+// 5 - Ferret
 while(newX >= houseX1 && newX <= houseX2 && newY >= houseY1 && newY <= houseY2) {
 	newX = irandom_range(0,gridWidth - 1);
 	newY = irandom_range(0,gridHeight - 1)
